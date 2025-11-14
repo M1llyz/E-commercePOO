@@ -1,18 +1,22 @@
+# feito
+
 # Main: Arquivo principal que executa a lógica do programa da Loja Virtual.
 
 # Importa as classes dos módulos (pacote 'modelos')
 from modelos.loja import Loja
 from modelos.carrinho import Carrinho
 from modelos.vendedor import Vendedor 
+from modelos.cliente import Cliente 
+from modelos.pagamento import PagamentoPix, PagamentoDebito, PagamentoCredito
 
 
-def menu_pagamento(carrinho: Carrinho):
-    #Gerencia o Sub-Menu de Pagamentos
+def menu_pagamento(carrinho: Carrinho, minha_loja: Loja): # Adiciona minha_loja
+    # Gerencia o Sub-Menu de Pagamentos, usa as classes polimórficas
     while True:
         print("\n=================================")
         print("        PROCESSO DE PAGAMENTO    ")
         print("=================================")
-        carrinho.exibir_carrinho() # Exibe o resumo do carrinho
+        carrinho.exibir_carrinho() 
         print("1. Escolher Forma de Pagamento")
         print("2. Voltar ao Menu Principal")
         escolha_pagamento = input("Escolha uma opção (1-2): ")
@@ -25,19 +29,19 @@ def menu_pagamento(carrinho: Carrinho):
             print("3. Crédito")
             forma_pagamento_opcao = input("Escolha uma opção (1-3): ")
 
-            nome_forma_pagamento = ""
+            objeto_pagamento = None
             if forma_pagamento_opcao == "1":
-                nome_forma_pagamento = "PIX"
+                objeto_pagamento = PagamentoPix(carrinho.valor_total)
             elif forma_pagamento_opcao == "2":
-                nome_forma_pagamento = "Débito"
+                objeto_pagamento = PagamentoDebito(carrinho.valor_total)
             elif forma_pagamento_opcao == "3":
-                nome_forma_pagamento = "Crédito"
+                objeto_pagamento = PagamentoCredito(carrinho.valor_total)
             else:
                 print("❌ Opção de pagamento inválida. Voltando ao menu de pagamento.")
                 continue 
 
-            # Processa a compra (atualiza o estoque e emite nota fiscal)
-            carrinho.processar_compra(nome_forma_pagamento)
+            # Processa a compra: Passa o objeto Pagamento (Polimorfismo) e a Loja (SRP)
+            carrinho.processar_compra(objeto_pagamento, minha_loja) 
             
             # Opções após a compra
             print("\n=================================")
@@ -57,11 +61,16 @@ def menu_pagamento(carrinho: Carrinho):
             print("❌ Opção inválida. Por favor, escolha 1 ou 2.")
 
 def main():
-    # Função principal que executa a lógica do programa. Instancia as classes (os objetos) que serão utilizados
+    # Instancia as classes (os objetos) que serão utilizados
     minha_loja = Loja()
     meu_carrinho = Carrinho()
-    meu_vendedor = Vendedor(minha_loja) # Vendedor é instanciado com a Loja associada
+    
+    # Instanciação com Herança
+    meu_vendedor = Vendedor(minha_loja, nome="Maria", email="maria@loja.com") 
+    meu_cliente = Cliente(nome="João", email="joao@cliente.com") 
 
+    meu_cliente.exibir_boas_vindas() 
+    
     while True:
         # O Menu Principal
         print("\n=================================")
@@ -85,8 +94,11 @@ def main():
                 produto_selecionado = minha_loja.buscar_produto(codigo)
 
                 if produto_selecionado:
-                    quantidade = int(input(f"Quantas unidades de {produto_selecionado.nome} você deseja? "))
-                    meu_carrinho.adicionar_ao_carrinho(produto_selecionado, quantidade)
+                    # Busca o produto novamente para garantir que ele é um objeto que o Carrinho pode rastrear
+                    produto_para_carrinho = minha_loja.buscar_produto(codigo) 
+                    
+                    quantidade = int(input(f"Quantas unidades de {produto_para_carrinho.nome} você deseja? "))
+                    meu_carrinho.adicionar_ao_carrinho(produto_para_carrinho, quantidade)
                 else:
                     print("❌ Erro: Produto não encontrado.")
             except ValueError:
@@ -99,7 +111,8 @@ def main():
             if meu_carrinho.esta_vazio():
                 print("❌ Não é possível finalizar a compra. O carrinho está vazio.")
             else:
-                menu_pagamento(meu_carrinho)
+                # Passa a Loja para o menu de pagamento
+                menu_pagamento(meu_carrinho, minha_loja)
 
         elif escolha == "5":
             meu_vendedor.acessar_cadastro()

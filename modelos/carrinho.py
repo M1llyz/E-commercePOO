@@ -1,7 +1,11 @@
-# Classe Carrinho: Gerencia os produtos que o cliente deseja comprar. Demonstra Composição, pois o carrinho é composto por instâncias de Produto.
+# feito
+
+# Classe Carrinho: Gerencia os produtos que o cliente deseja comprar. Demonstra Composição (itens_comprados) e orquestra o Polimorfismo.
 
 from datetime import datetime
-from .produto import Produto  # Importa a classe Produto do mesmo pacote
+from .produto import Produto  
+from .loja import Loja 
+from .pagamento import Pagamento 
 
 class Carrinho:
     
@@ -24,7 +28,7 @@ class Carrinho:
     def adicionar_ao_carrinho(self, produto: Produto, quantidade: int):
         # Adiciona um produto ao carrinho verificando o estoque
         if quantidade <= 0:
-            print("❌ Erro: A quantidade deve ser maior que zero.")
+            print("Erro: A quantidade deve ser maior que zero.")
             return
 
         if produto.tem_estoque(quantidade):
@@ -32,9 +36,9 @@ class Carrinho:
                 self.itens_comprados[produto] += quantidade
             else:
                 self.itens_comprados[produto] = quantidade
-            print(f"✅ {quantidade}x {produto.nome} adicionado(s) ao carrinho.")
+            print(f"{quantidade}x {produto.nome} adicionado(s) ao carrinho.")
         else:
-            print(f"❌ Erro: Estoque insuficiente para {produto.nome}. Disponível: {produto.estoque}.")
+            print(f"Erro: Estoque insuficiente para {produto.nome}. Disponível: {produto.estoque}.")
 
     def exibir_carrinho(self):
         # Exibe os itens do carrinho
@@ -50,18 +54,32 @@ class Carrinho:
         print(f"VALOR TOTAL: R$ {self.valor_total:.2f}")
         print("--------------------------")
 
-    def processar_compra(self, forma_pagamento: str):
-        # Simula o processamento final da compra, atualiza estoque e emitindo nota fiscal
+    def processar_compra(self, objeto_pagamento: Pagamento, minha_loja: Loja): 
+        
+        forma_pagamento = objeto_pagamento.processar() # CHAMA O MÉTODO POLIMÓRFICO
+        
         print("\n=================================")
         print("      REALIZANDO PAGAMENTO...    ")
         print("=================================")
         print(f"Pagamento via {forma_pagamento} de R$ {self.valor_total:.2f} APROVADO!")
 
-        # 1. Atualiza o estoque para cada produto no carrinho
+        # 1. Atualiza o estoque e persiste no CSV (Lógica SRP)
         print("\n--- ATUALIZANDO ESTOQUE ---")
-        for produto, quantidade in self.itens_comprados.items():
-            produto.reduzir_estoque(quantidade)
-
+        
+        # 1.1 Lê a lista COMPLETA de produtos do CSV (via Repositório)
+        estoque_atualizado = minha_loja.repositorio_produto.buscar_todos() 
+        
+        # 1.2 Reduz o estoque na lista em memória (usando o método limpo de Produto)
+        for produto_no_carrinho, quantidade_comprada in self.itens_comprados.items():
+            for produto_no_estoque in estoque_atualizado:
+                if produto_no_carrinho.codigo == produto_no_estoque.codigo:
+                    produto_no_estoque.reduzir_estoque(quantidade_comprada) 
+                    print(f"- {quantidade_comprada} unidades de {produto_no_estoque.nome} baixadas.")
+                    break
+        
+        # 1.3 Salva a lista ATUALIZADA no CSV, completando a persistência
+        minha_loja.repositorio_produto.salvar_todos(estoque_atualizado)
+        
         # 2. Emite a Nota Fiscal simulada
         self._emitir_nota_fiscal(forma_pagamento)
 

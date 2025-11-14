@@ -1,3 +1,5 @@
+#feito
+
 # Classe Produto: Representa um item que pode ser vendido na loja. Demonstra Encapsulamento, pois o estoque é alterado apenas por métodos.
 
 class Produto:
@@ -6,7 +8,7 @@ class Produto:
         self.codigo = codigo
         self.nome = nome
         self.preco = preco
-        self._estoque = estoque  # Atributo "protegido" (somente por convenção, diferente de um atributo privado como __estoque)
+        self._estoque = estoque  # Atributo "protegido"
 
     @property
     def estoque(self):
@@ -18,12 +20,11 @@ class Produto:
         return self._estoque >= quantidade
 
     def reduzir_estoque(self, quantidade: int):
-        # Reduz o estoque após uma compra
+        # Reduz o estoque interno após uma compra.
         if self.tem_estoque(quantidade):
             self._estoque -= quantidade
-            print(f"- {quantidade} unidades de {self.nome} removidas do estoque.")
         else:
-            print(f"ERRO: Não foi possível reduzir o estoque de {self.nome}. Estoque insuficiente.")
+            pass # Em caso de erro, apenas não faz nada no estoque.
 
     def exibir_detalhes(self):
         # Exibe as informações do produto
