@@ -37,7 +37,7 @@ def menu_pagamento(carrinho: Carrinho, minha_loja: Loja): # Adiciona minha_loja
             elif forma_pagamento_opcao == "3":
                 objeto_pagamento = PagamentoCredito(carrinho.valor_total)
             else:
-                print("❌ Opção de pagamento inválida. Voltando ao menu de pagamento.")
+                print("Opção de pagamento inválida. Voltando ao menu de pagamento.")
                 continue 
 
             # Processa a compra: Passa o objeto Pagamento (Polimorfismo) e a Loja (SRP)
@@ -58,7 +58,7 @@ def menu_pagamento(carrinho: Carrinho, minha_loja: Loja): # Adiciona minha_loja
             return 
 
         else:
-            print("❌ Opção inválida. Por favor, escolha 1 ou 2.")
+            print("Opção inválida. Por favor, escolha 1 ou 2.")
 
 def main():
     # Instancia as classes (os objetos) que serão utilizados
@@ -67,7 +67,7 @@ def main():
     
     # Instanciação com Herança
     meu_vendedor = Vendedor(minha_loja, nome="Maria", email="maria@loja.com") 
-    meu_cliente = Cliente(nome="João", email="joao@cliente.com") 
+    meu_cliente = Cliente(nome="Ferauche", email="ferauche@cliente.com") 
 
     meu_cliente.exibir_boas_vindas() 
     
@@ -100,16 +100,16 @@ def main():
                     quantidade = int(input(f"Quantas unidades de {produto_para_carrinho.nome} você deseja? "))
                     meu_carrinho.adicionar_ao_carrinho(produto_para_carrinho, quantidade)
                 else:
-                    print("❌ Erro: Produto não encontrado.")
+                    print("Erro: Produto não encontrado.")
             except ValueError:
-                print("❌ Erro: Entrada inválida (código ou quantidade devem ser números inteiros).")
+                print("Erro: Entrada inválida (código ou quantidade devem ser números inteiros).")
 
         elif escolha == "3":
             meu_carrinho.exibir_carrinho()
 
         elif escolha == "4":
             if meu_carrinho.esta_vazio():
-                print("❌ Não é possível finalizar a compra. O carrinho está vazio.")
+                print("Não é possível finalizar a compra. O carrinho está vazio.")
             else:
                 # Passa a Loja para o menu de pagamento
                 menu_pagamento(meu_carrinho, minha_loja)

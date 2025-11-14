@@ -65,7 +65,7 @@ class RepositorioProduto:
         except FileNotFoundError:
             pass 
         except Exception as e:
-            print(f"❌ Erro ao ler o repositório: {e}")
+            print(f"Erro ao ler o repositório: {e}")
             
         return produtos
 
@@ -95,7 +95,7 @@ class RepositorioProduto:
         
         # 1. Verifica duplicidade lendo o arquivo atualizado
         if self.buscar_por_codigo(produto.codigo): 
-             print(f"❌ Erro: Produto com código {produto.codigo} já existe. Não foi adicionado.")
+             print(f"Erro: Produto com código {produto.codigo} já existe. Não foi adicionado.")
              return False
         
         # 2. Adiciona o novo produto ao final do arquivo
@@ -107,5 +107,5 @@ class RepositorioProduto:
                 'preco': produto.preco,
                 'estoque': produto.estoque
             })
-        print(f"✅ Produto '{produto.nome}' (Cód: {produto.codigo}) adicionado ao estoque da Loja!")
+        print(f"Produto '{produto.nome}' (Cód: {produto.codigo}) adicionado ao estoque da Loja!")
         return True
