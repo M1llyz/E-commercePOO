@@ -1,16 +1,13 @@
-# feito
+# Classe Cliente: Representa o consumidor da loja. Herda atributos e métodos da classe base Usuario.
 
-# Classe Cliente: Herda a estrutura básica de Usuario para identficação do cliente na loja.
-
-from .usuario import Usuario
+from usuario import Usuario
 
 class Cliente(Usuario):
-    # Representa o cliente, herdando atributos de Usuario.
     
     def __init__(self, nome: str, email: str, senha: str = ""):
-        # Chama o construtor da classe base (Usuario)
+        # Inicializa o cliente chamando o construtor da classe pai (Usuario)
         super().__init__(nome, email, senha) 
         
-    def exibir_boas_vindas(self):
-        # Método de interface (CLI) que demonstra a instância.
-        print(f"\nSeja bem-vindo(a), {self.nome}! Pronto(a) para comprar.")
+    def get_mensagem_boas_vindas(self) -> str:
+        # Retorna a mensagem de boas-vindas para ser exibida na interface
+        return f"Seja bem-vindo(a), {self.nome}! Pronto(a) para comprar."

@@ -1,10 +1,8 @@
-# feito
-
 # Implementando o SRP: Única classe responsável pela persistência (CRUD) de objetos Produto em um arquivo CSV, isolando a lógica de dados.
 
 import csv
 import os
-from .produto import Produto
+from produto import Produto
 
 class RepositorioProduto:
     
@@ -44,8 +42,6 @@ class RepositorioProduto:
                     'preco': produto.preco,
                     'estoque': produto.estoque
                 })
-        print("Repositório inicializado e populado com dados base no CSV.")
-
     
     def buscar_todos(self) -> list[Produto]:
         # Lê todos os registros do CSV e retorna como lista de objetos Produto.
@@ -64,8 +60,8 @@ class RepositorioProduto:
                     produtos.append(produto)
         except FileNotFoundError:
             pass 
-        except Exception as e:
-            print(f"Erro ao ler o repositório: {e}")
+        except Exception:
+            pass # Silencia erros de leitura para não poluir a interface
             
         return produtos
 
@@ -77,8 +73,7 @@ class RepositorioProduto:
         return None
     
     def salvar_todos(self, produtos: list[Produto]):
-        # Sobrescreve o CSV com a lista completa de produtos (usado para o UPDATE de estoque).
-        # Abre no modo 'w' (write), o que apaga o conteúdo anterior
+        # Sobrescreve o CSV com a lista completa de produtos (usado para UPDATE de estoque).
         with open(self.ARQUIVO_CSV, mode='w', newline='', encoding='utf-8') as f: 
             writer = csv.DictWriter(f, fieldnames=self.COLUNAS)
             writer.writeheader()
@@ -91,14 +86,13 @@ class RepositorioProduto:
                 })
 
     def adicionar_produto(self, produto: Produto) -> bool:
-        # Adiciona um novo produto ao CSV.
+        # Adiciona um novo produto ao CSV e retorna True se sucesso ou False se duplicado.
         
-        # 1. Verifica duplicidade lendo o arquivo atualizado
+        # 1. Verifica duplicidade
         if self.buscar_por_codigo(produto.codigo): 
-             print(f"Erro: Produto com código {produto.codigo} já existe. Não foi adicionado.")
              return False
-        
-        # 2. Adiciona o novo produto ao final do arquivo
+
+        # 2. Escreve no modo 'a' (append)
         with open(self.ARQUIVO_CSV, mode='a', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=self.COLUNAS)
             writer.writerow({
@@ -107,5 +101,4 @@ class RepositorioProduto:
                 'preco': produto.preco,
                 'estoque': produto.estoque
             })
-        print(f"Produto '{produto.nome}' (Cód: {produto.codigo}) adicionado ao estoque da Loja!")
         return True
