@@ -84,6 +84,7 @@ Este é um projeto acadêmico, mas sugestões são bem-vindas! Sinta-se à vonta
 
 ## 👨‍💻 Desenvolvedores
 
-* **JAMILLY VERTUOZA DE ARAUJO**
-* **ALI IHSEN KHATIB**
-* **RAYDA OMAR ANKA**
+* **JAMILLY VERTUOZA DE ARAUJO (jamillya@unisantos.br)**
+* **ALI IHSEN KHATIB (alikhatib@unisantos.br)**
+* **RAYDA OMAR ANKA (raydaanka@unisantos.br)**
+
